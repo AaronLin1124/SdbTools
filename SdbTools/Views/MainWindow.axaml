@@ -3,7 +3,6 @@
         x:Class="DbcTools.CrossPlatform.Views.MainWindow"
         Title="SdbTools"
         Width="1400" Height="580"
-        FontSize="16"
         MinWidth="1100" MinHeight="450"
         WindowStartupLocation="CenterScreen">
 
