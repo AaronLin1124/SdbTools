@@ -8,6 +8,7 @@
 
     <Grid RowDefinitions="Auto,*,Auto">
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10,10,10,5">
+            <TextBlock Text="SdbTools" FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,30,0"/>
             <Button Name="BtnOpen" Content="打开文件" Width="100" Height="32" Margin="0,0,10,0" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
             <Button Name="BtnGenerate" Content="生成" Width="100" Height="32" IsEnabled="False" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
             <Button Name="BtnCheckUpdate" Content="检查升级" Width="130" Height="32" Margin="20,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
