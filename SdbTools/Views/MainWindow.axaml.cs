@@ -23,8 +23,8 @@ public partial class MainWindow : Window
 
     private readonly Dictionary<string, string[]> _lang = new()
     {
-        ["zh"] = ["SdbTools", "打开文件", "生成", "就绪", "报文名称", "报文ID", "信号名", "起始位", "长度", "精度", "偏移量", "单位", "字节顺序", "值类型", "选择DBC文件", "DBC文件", "所有文件", "保存SDBC文件", "SDBC文件", "错误", "解析DBC文件失败", "完成", "成功生成", "生成SDBC文件失败", "个信号", "检查升级", "无效", "发现新版本", "是否前往下载", "当前版本", "已是最新版本", "检查更新失败", "请检查网络连接", "下载新版本", "取消"],
-        ["en"] = ["SdbTools", "Open", "Generate", "Ready", "Message Name", "Message ID", "Signal Name", "Start Bit", "Length", "Factor", "Offset", "Unit", "Byte Order", "Value Type", "Select DBC File", "DBC Files", "All Files", "Save SDBC File", "SDBC Files", "Error", "Failed to parse DBC file", "Success", "Successfully generated", "Failed to generate SDBC file", "signals", "Check Update", "invalid", "New version available", "Download now?", "Current version", "Already up to date", "Check failed", "Please check network", "Download", "Cancel"]
+        ["zh"] = ["SdbTools", "打开文件", "生成", "就绪", "报文名称", "报文ID", "信号名", "起始位", "长度", "精度", "偏移量", "单位", "字节顺序", "值类型", "选择DBC文件", "DBC文件", "所有文件", "保存SDBC文件", "SDBC文件", "错误", "解析DBC文件失败", "完成", "成功生成", "生成SDBC文件失败", "个信号", "检查升级", "无效", "发现新版本", "是否前往下载", "当前版本", "已是最新版本", "检查更新失败", "请检查网络连接", "下载", "取消", "版本更新"],
+        ["en"] = ["SdbTools", "Open", "Generate", "Ready", "Message Name", "Message ID", "Signal Name", "Start Bit", "Length", "Factor", "Offset", "Unit", "Byte Order", "Value Type", "Select DBC File", "DBC Files", "All Files", "Save SDBC File", "SDBC Files", "Error", "Failed to parse DBC file", "Success", "Successfully generated", "Failed to generate SDBC file", "signals", "Check Update", "invalid", "New version available", "Download now?", "Current version", "Already up to date", "Check failed", "Please check network", "Download", "Cancel", "Version Update"]
     };
 
     private readonly string _version = "v1.0.1";
@@ -313,9 +313,12 @@ public partial class MainWindow : Window
             var latestVersion = doc.RootElement.GetProperty("tag_name").GetString() ?? "";
             var htmlUrl = doc.RootElement.GetProperty("html_url").GetString() ?? "";
             
-            if (latestVersion != _version)
+            var localVer = new Version(_version.TrimStart('v'));
+            var remoteVer = new Version(latestVersion.TrimStart('v'));
+            
+            if (remoteVer > localVer)
             {
-                var result = await ShowConfirmDialog(t[7], $"{t[27]}\n{t[29]}: {_version} -> {latestVersion}\n{t[28]}");
+                var result = await ShowConfirmDialog(t[35], $"{t[27]}\n{t[29]}: {_version} -> {latestVersion}\n{t[28]}");
                 if (result)
                 {
                     var psi = new ProcessStartInfo
