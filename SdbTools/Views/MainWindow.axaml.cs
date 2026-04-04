@@ -27,7 +27,7 @@ public partial class MainWindow : Window
         ["en"] = ["SdbTools", "Open", "Generate", "Ready", "Message Name", "Message ID", "Signal Name", "Start Bit", "Length", "Factor", "Offset", "Unit", "Byte Order", "Value Type", "Select DBC File", "DBC Files", "All Files", "Save SDBC File", "SDBC Files", "Error", "Failed to parse DBC file", "Success", "Successfully generated", "Failed to generate SDBC file", "signals", "Check Update", "invalid", "New version available", "Download now?", "Current version", "Already up to date", "Check failed", "Please check network", "Download", "Cancel"]
     };
 
-    private readonly string _version = "v1.0.0";
+    private readonly string _version = "v1.0.1";
     private const string REPO_OWNER = "AaronLin1124";
     private const string REPO_NAME = "SdbTools";
 
