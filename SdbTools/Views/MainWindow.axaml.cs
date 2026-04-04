@@ -23,8 +23,8 @@ public partial class MainWindow : Window
 
     private readonly Dictionary<string, string[]> _lang = new()
     {
-        ["zh"] = ["SdbTools", "打开文件", "生成", "就绪", "报文名称", "报文ID", "信号名", "起始位", "长度", "精度", "偏移量", "单位", "字节顺序", "值类型", "选择DBC文件", "DBC文件", "所有文件", "保存SDBC文件", "SDBC文件", "错误", "解析DBC文件失败", "完成", "成功生成", "生成SDBC文件失败", "个信号", "检查升级", "无效", "发现新版本", "是否前往下载", "当前版本", "已是最新版本", "检查更新失败", "请检查网络连接", "下载新版本"],
-        ["en"] = ["SdbTools", "Open", "Generate", "Ready", "Message Name", "Message ID", "Signal Name", "Start Bit", "Length", "Factor", "Offset", "Unit", "Byte Order", "Value Type", "Select DBC File", "DBC Files", "All Files", "Save SDBC File", "SDBC Files", "Error", "Failed to parse DBC file", "Success", "Successfully generated", "Failed to generate SDBC file", "signals", "Check Update", "invalid", "New version available", "Download now?", "Current version", "Already up to date", "Check failed", "Please check network", "Download"]
+        ["zh"] = ["SdbTools", "打开文件", "生成", "就绪", "报文名称", "报文ID", "信号名", "起始位", "长度", "精度", "偏移量", "单位", "字节顺序", "值类型", "选择DBC文件", "DBC文件", "所有文件", "保存SDBC文件", "SDBC文件", "错误", "解析DBC文件失败", "完成", "成功生成", "生成SDBC文件失败", "个信号", "检查升级", "无效", "发现新版本", "是否前往下载", "当前版本", "已是最新版本", "检查更新失败", "请检查网络连接", "下载新版本", "取消"],
+        ["en"] = ["SdbTools", "Open", "Generate", "Ready", "Message Name", "Message ID", "Signal Name", "Start Bit", "Length", "Factor", "Offset", "Unit", "Byte Order", "Value Type", "Select DBC File", "DBC Files", "All Files", "Save SDBC File", "SDBC Files", "Error", "Failed to parse DBC file", "Success", "Successfully generated", "Failed to generate SDBC file", "signals", "Check Update", "invalid", "New version available", "Download now?", "Current version", "Already up to date", "Check failed", "Please check network", "Download", "Cancel"]
     };
 
     private readonly string _version = "v1.0.0";
@@ -261,6 +261,7 @@ public partial class MainWindow : Window
 
     private async Task ShowMessage(string title, string message)
     {
+        var t = _lang[_currentLang == 0 ? "zh" : "en"];
         var dialog = new Window
         {
             Title = title,
@@ -272,10 +273,11 @@ public partial class MainWindow : Window
 
         var btn = new Button
         {
-            Content = "OK",
+            Content = _currentLang == 0 ? "确定" : "OK",
             Width = 80,
             Height = 30,
-            HorizontalAlignment = HorizontalAlignment.Center
+            HorizontalAlignment = HorizontalAlignment.Center,
+            HorizontalContentAlignment = HorizontalAlignment.Center
         };
         btn.Click += (_, _) => dialog.Close();
 
@@ -284,6 +286,7 @@ public partial class MainWindow : Window
             Margin = new Avalonia.Thickness(20),
             Spacing = 15,
             VerticalAlignment = VerticalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center,
             Children =
             {
                 new TextBlock { Text = message, TextWrapping = Avalonia.Media.TextWrapping.Wrap },
@@ -348,8 +351,8 @@ public partial class MainWindow : Window
             CanResize = false
         };
 
-        var btnOk = new Button { Content = t[33], Width = 80, Height = 30 };
-        var btnCancel = new Button { Content = "Cancel", Width = 80, Height = 30 };
+        var btnOk = new Button { Content = t[33], Width = 80, Height = 30, HorizontalAlignment = HorizontalAlignment.Center, HorizontalContentAlignment = HorizontalAlignment.Center };
+        var btnCancel = new Button { Content = t[34], Width = 80, Height = 30, HorizontalAlignment = HorizontalAlignment.Center, HorizontalContentAlignment = HorizontalAlignment.Center };
 
         btnOk.Click += (_, _) => { dialog.Close(); tcs.TrySetResult(true); };
         btnCancel.Click += (_, _) => { dialog.Close(); tcs.TrySetResult(false); };
