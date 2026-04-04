@@ -306,7 +306,7 @@ public partial class MainWindow : Window
         try
         {
             using var client = new HttpClient();
-            client.DefaultRequestHeaders.UserAgent.ParseAdd("DbcTools");
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("SdbTools");
             var json = await client.GetStringAsync(
                 $"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/releases/latest");
             using var doc = JsonDocument.Parse(json);
@@ -315,7 +315,7 @@ public partial class MainWindow : Window
             
             if (latestVersion != _version)
             {
-                var result = await ShowConfirmDialog(t[7], $"{t[27]}\n{t[28]}");
+                var result = await ShowConfirmDialog(t[7], $"{t[27]}\n{t[29]}: {_version} -> {latestVersion}\n{t[28]}");
                 if (result)
                 {
                     var psi = new ProcessStartInfo
