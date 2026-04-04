@@ -251,7 +251,7 @@ public partial class MainWindow : Window
             LblStatus.Text = $"{t[22]}: {file.Path.LocalPath}";
             _lastStatusText = LblStatus.Text;
             _lastStatusPath = file.Path.LocalPath;
-            await ShowMessage(t[21], $"{t[22]} {file.Path.LocalPath}");
+            await ShowMessage(t[21], $"{t[22]}: {file.Name}");
         }
         catch (Exception ex)
         {
