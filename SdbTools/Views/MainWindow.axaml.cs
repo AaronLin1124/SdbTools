@@ -311,22 +311,65 @@ public partial class MainWindow : Window
                 $"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/releases/latest");
             using var doc = JsonDocument.Parse(json);
             var latestVersion = doc.RootElement.GetProperty("tag_name").GetString() ?? "";
-            var htmlUrl = doc.RootElement.GetProperty("html_url").GetString() ?? "";
             
             var localVer = new Version(_version.TrimStart('v'));
             var remoteVer = new Version(latestVersion.TrimStart('v'));
             
             if (remoteVer > localVer)
             {
-                var result = await ShowConfirmDialog(t[35], $"{t[27]}\n{t[29]}: {_version} -> {latestVersion}\n{t[28]}");
-                if (result)
+                var assets = doc.RootElement.GetProperty("assets");
+                string? downloadUrl = null;
+                string? fileName = null;
+                
+                foreach (var asset in assets.EnumerateArray())
                 {
+                    var name = asset.GetProperty("name").GetString() ?? "";
+                    if (name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                    {
+                        downloadUrl = asset.GetProperty("browser_download_url").GetString();
+                        fileName = name;
+                        break;
+                    }
+                }
+                
+                if (downloadUrl != null)
+                {
+                    LblStatus.Text = $"{t[3]}: {t[33]}...";
+                    
+                    var tempPath = Path.Combine(Path.GetTempPath(), fileName ?? "SdbTools_update.exe");
+                    using (var response = await client.GetAsync(downloadUrl))
+                    {
+                        response.EnsureSuccessStatusCode();
+                        await using var fs = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None);
+                        await response.Content.CopyToAsync(fs);
+                    }
+                    
+                    var currentExe = Environment.ProcessPath ?? "";
+                    var batchPath = Path.Combine(Path.GetTempPath(), "update.bat");
+                    var batchContent = $@"
+@echo off
+timeout /t 2 /nobreak > nul
+copy /y ""{tempPath}"" ""{currentExe}""
+start """" ""{currentExe}""
+del ""{tempPath}""
+del ""%~f0""
+";
+                    await File.WriteAllTextAsync(batchPath, batchContent);
+                    
+                    await ShowMessage(t[35], $"{t[27]}\n{t[29]}: {_version} -> {latestVersion}");
+                    
                     var psi = new ProcessStartInfo
                     {
-                        FileName = htmlUrl,
-                        UseShellExecute = true
+                        FileName = batchPath,
+                        UseShellExecute = true,
+                        CreateNoWindow = true
                     };
                     Process.Start(psi);
+                    Close();
+                }
+                else
+                {
+                    await ShowMessage(t[35], $"{t[31]}: No exe found in release");
                 }
             }
             else
