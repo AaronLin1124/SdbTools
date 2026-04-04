@@ -27,7 +27,7 @@ public partial class MainWindow : Window
         ["en"] = ["SdbTools", "Open", "Generate", "Ready", "Message Name", "Message ID", "Signal Name", "Start Bit", "Length", "Factor", "Offset", "Unit", "Byte Order", "Value Type", "Select DBC File", "DBC Files", "All Files", "Save SDBC File", "SDBC Files", "Error", "Failed to parse DBC file", "Success", "Successfully generated", "Failed to generate SDBC file", "signals", "Check Update", "invalid", "New version available", "Download now?", "Current version", "Already up to date", "Check failed", "Please check network", "Download", "Cancel", "Version Update", "Notice"]
     };
 
-    private readonly string _version = "v1.0.1";
+    private readonly string _version = "v1.0.0";
     private const string REPO_OWNER = "AaronLin1124";
     private const string REPO_NAME = "SdbTools";
 
@@ -317,6 +317,9 @@ public partial class MainWindow : Window
             
             if (remoteVer > localVer)
             {
+                var result = await ShowConfirmDialog(t[35], $"{t[27]}\n{t[29]}: {_version} -> {latestVersion}");
+                if (!result) return;
+                
                 var assets = doc.RootElement.GetProperty("assets");
                 string? downloadUrl = null;
                 string? fileName = null;
@@ -334,14 +337,29 @@ public partial class MainWindow : Window
                 
                 if (downloadUrl != null)
                 {
-                    LblStatus.Text = $"{t[3]}: {t[33]}...";
-                    
                     var tempPath = Path.Combine(Path.GetTempPath(), fileName ?? "SdbTools_update.exe");
-                    using (var response = await client.GetAsync(downloadUrl))
+                    
+                    using var response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
+                    response.EnsureSuccessStatusCode();
+                    var totalBytes = response.Content.Headers.ContentLength ?? -1;
+                    
+                    LblStatus.Text = $"{t[33]}: 0%";
+                    
+                    await using var fs = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None);
+                    await using var stream = await response.Content.ReadAsStreamAsync();
+                    
+                    var buffer = new byte[8192];
+                    long totalRead = 0;
+                    int bytesRead;
+                    while ((bytesRead = await stream.ReadAsync(buffer)) > 0)
                     {
-                        response.EnsureSuccessStatusCode();
-                        await using var fs = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None);
-                        await response.Content.CopyToAsync(fs);
+                        await fs.WriteAsync(buffer.AsMemory(0, bytesRead));
+                        totalRead += bytesRead;
+                        if (totalBytes > 0)
+                        {
+                            var progress = (int)((totalRead * 100) / totalBytes);
+                            LblStatus.Text = $"{t[33]}: {progress}%";
+                        }
                     }
                     
                     var currentExe = Environment.ProcessPath ?? "";
@@ -356,7 +374,7 @@ del ""%~f0""
 ";
                     await File.WriteAllTextAsync(batchPath, batchContent);
                     
-                    await ShowMessage(t[35], $"{t[27]}\n{t[29]}: {_version} -> {latestVersion}");
+                    await ShowMessage(t[21], $"{t[22]}");
                     
                     var psi = new ProcessStartInfo
                     {
