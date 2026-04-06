@@ -6,6 +6,8 @@ namespace DbcTools.CrossPlatform.Writers;
 public static class BinWriter
 {
     private const string MagicNumber = "sbdc";
+    private const byte HeaderLength = 32;
+    private const byte SignalBodyLength = 64;
 
     public static void Write(string outputPath, List<DbcSignal> signals)
     {
@@ -15,7 +17,9 @@ public static class BinWriter
         using var bw = new BinaryWriter(ms);
 
         WriteString(bw, MagicNumber, 4);
-        var reserved = new byte[24];
+        bw.Write(HeaderLength);
+        bw.Write(SignalBodyLength);
+        var reserved = new byte[22];
         bw.Write(reserved);
         bw.Write((ushort)0);
         bw.Write((ushort)validSignals.Count);
