@@ -2,7 +2,7 @@
 
 ## 1 文件概述
 
-Sdbc (Scud Power DBC Binary) 是一种用于 CAN/串口通信的二进制信号定义文件格式。
+Sdbc (Signal Database for CAN) 是一种用于 CAN/串口通信的二进制信号定义文件格式。
 
 ## 2 文件结构
 
