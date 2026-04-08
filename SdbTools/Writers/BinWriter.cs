@@ -27,14 +27,14 @@ public static class BinWriter
         foreach (var sig in validSignals)
         {
             bw.Write(sig.MessageId);
-            bw.Write((byte)sig.MessageDlc);
+            bw.Write((ushort)sig.MessageDlc);
             WriteString(bw, sig.Name, 32);
             ushort packed = (ushort)((sig.Length << 9) | (sig.StartBit & 0x1FF));
             if (sig.ByteOrder == "Intel") packed |= 0x8000;
             bw.Write(packed);
             bw.Write(sig.Factor);
             bw.Write(sig.Offset);
-            WriteString(bw, sig.Unit, 16);
+            WriteString(bw, sig.Unit, 8);
             byte valueType = sig.ValueType switch
             {
                 "signed" => 1,
@@ -45,7 +45,8 @@ public static class BinWriter
             byte flags = valueType;
             if (sig.IsExtendedFrame) flags |= 0x04;
             bw.Write(flags);
-            bw.Write((byte)0);
+            var sigReserved = new byte[7];
+            bw.Write(sigReserved);
         }
 
         bw.Flush();
